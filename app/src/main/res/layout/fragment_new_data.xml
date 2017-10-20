@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:text="@string/connect" />
         <Button
-            android:id="@+id/bt_request"
+            android:id="@+id/bt_getTemp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:enabled="false"

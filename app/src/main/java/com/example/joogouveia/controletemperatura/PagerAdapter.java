@@ -12,6 +12,9 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     int numOfTabs;
 
+    private NewData tab1;
+    private Summary tab0;
+
     public PagerAdapter(FragmentManager fm, int numOfTabs){
         super(fm);
         this.numOfTabs = numOfTabs;
@@ -21,14 +24,18 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                Summary tab0 = new Summary();
+                tab0 = new Summary();
                 return tab0;
             case 1:
-                NewData tab1 = new NewData();
+                tab1 = new NewData();
                 return tab1;
             default:
                 return null;
         }
+    }
+
+    public Fragment getNewData(){
+        return tab1;
     }
 
     @Override

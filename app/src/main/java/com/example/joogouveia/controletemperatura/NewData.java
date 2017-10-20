@@ -1,12 +1,18 @@
 package com.example.joogouveia.controletemperatura;
 
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECT_REQUEST;
 
 
 /**
@@ -17,11 +23,19 @@ import android.view.ViewGroup;
  * Use the {@link NewData#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class NewData extends Fragment {
+public class NewData extends Fragment implements View.OnClickListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public static final String ACTION_GET_TEMPERATURE =
+            "com.example.joogouveia.controletemperatura.newdata.ACTION_GET_TEMPERATURE";
+
+    private Context appCtx;
+
+    Button connectButton;
+    Button requestButton;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -63,8 +77,17 @@ public class NewData extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_new_data, container, false);
+
+        connectButton = (Button) view.findViewById(R.id.bt_connect);
+        requestButton = (Button) view.findViewById(R.id.bt_getTemp);
+
+        appCtx = view.getContext();
+
+        connectButton.setOnClickListener(this);
+        requestButton.setOnClickListener(this);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_new_data, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -81,6 +104,22 @@ public class NewData extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+
+        switch (id){
+            case R.id.bt_connect:
+                if(connectButton.getText().equals(getString(R.string.connect))){
+                    broadcastUpdate(ACTION_CONNECT_REQUEST);
+                }
+                break;
+            case R.id.bt_getTemp:
+                broadcastUpdate(ACTION_GET_TEMPERATURE);
+                break;
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -94,5 +133,18 @@ public class NewData extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private void broadcastUpdate(final String action) {
+        final Intent intent = new Intent(action);
+        appCtx.sendBroadcast(intent);
+    }
+
+    public void enableGetDataButton(){
+        requestButton.setEnabled(true);
+    }
+
+    public void setDisconnect(){
+        connectButton.setText(getString(R.string.disconnect));
     }
 }

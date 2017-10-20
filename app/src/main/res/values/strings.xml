@@ -4,4 +4,7 @@
     <string name="connect">Conectar</string>
     <string name="request">Buscar Temperatura</string>
     <string name="save">Salvar</string>
+    <string name="connecting">Conectando</string>
+    <string name="disconnect">Desconectar</string>
+    <string name="device_not_found">Dispositivo não encontrado</string>
 </resources>
