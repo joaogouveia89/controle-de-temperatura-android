@@ -11,8 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECT_REQUEST;
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_DISCONNECTED;
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_DISCONNECTING;
 
 
 /**
@@ -36,6 +39,11 @@ public class NewData extends Fragment implements View.OnClickListener{
 
     Button connectButton;
     Button requestButton;
+    TextView temperatureTextView;
+    Button sendButton;
+
+    int integerPart;
+    int decimalPart;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -81,11 +89,14 @@ public class NewData extends Fragment implements View.OnClickListener{
 
         connectButton = (Button) view.findViewById(R.id.bt_connect);
         requestButton = (Button) view.findViewById(R.id.bt_getTemp);
+        temperatureTextView = (TextView) view.findViewById(R.id.tv_temperature);
+        sendButton = (Button) view.findViewById(R.id.bt_send);
 
         appCtx = view.getContext();
 
         connectButton.setOnClickListener(this);
         requestButton.setOnClickListener(this);
+        sendButton.setOnClickListener(this);
         // Inflate the layout for this fragment
         return view;
     }
@@ -112,6 +123,8 @@ public class NewData extends Fragment implements View.OnClickListener{
             case R.id.bt_connect:
                 if(connectButton.getText().equals(getString(R.string.connect))){
                     broadcastUpdate(ACTION_CONNECT_REQUEST);
+                }else{
+                    broadcastUpdate(ACTION_DISCONNECTING);
                 }
                 break;
             case R.id.bt_getTemp:
@@ -146,5 +159,23 @@ public class NewData extends Fragment implements View.OnClickListener{
 
     public void setDisconnect(){
         connectButton.setText(getString(R.string.disconnect));
+    }
+    public void setConnect(){
+        connectButton.setText(getString(R.string.connect));
+    }
+
+    public void setIntegerPart(int number){ integerPart = number; }
+    public void setDecimalPart(int number){ decimalPart = number; }
+
+    public void showSendTemperatureOptions(){
+        temperatureTextView.setVisibility(View.VISIBLE);
+        sendButton.setVisibility(View.VISIBLE);
+        temperatureTextView.setText("Temperatura: " + integerPart + "," + decimalPart + "ºC");
+    }
+
+    public void resetWidgets(){
+        temperatureTextView.setVisibility(View.INVISIBLE);
+        sendButton.setVisibility(View.INVISIBLE);
+        requestButton.setEnabled(false);
     }
 }

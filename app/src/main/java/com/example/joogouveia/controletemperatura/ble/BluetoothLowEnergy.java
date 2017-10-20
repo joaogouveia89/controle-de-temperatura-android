@@ -43,8 +43,10 @@ public class BluetoothLowEnergy {
     private static BluetoothDevice bleDevice;
     private static BluetoothGatt bleGatt;
 
+    private int packageNumber = 0;
 
-    private byte[] data;
+
+    private byte data;
     private Handler mHandler;
     private Context appContext;
 
@@ -145,7 +147,9 @@ public class BluetoothLowEnergy {
         bleGatt.discoverServices();
     }
 
-
+    public void disconnect(){
+        bleGatt.disconnect();
+    }
 
     public void initializeServiceAndCharacteristic(){
         service = bleGatt.getService(serviceUUID);
@@ -157,6 +161,7 @@ public class BluetoothLowEnergy {
 
     public void askForData(){
         Log.i(TAG, "Asking for data");
+        packageNumber = 0;
         characteristic.setValue(new byte[] {0x64});
         //value chosen because there will be no temperature in 100ºC 0x54 = 100
         bleGatt.writeCharacteristic(characteristic);
@@ -205,6 +210,15 @@ public class BluetoothLowEnergy {
             Log.i(TAG, "WROOOTE");
             broadcastUpdate(ACTION_CHARACTERISTIC_WROTE);
         }
+
+        @Override
+        public void onCharacteristicChanged (BluetoothGatt gatt,
+                                      BluetoothGattCharacteristic characteristic){
+            broadcastUpdate(ACTION_DATA_RECEIVED);
+            packageNumber++;
+            data = characteristic.getValue()[0];
+            Log.i(TAG, "Val = " + characteristic.getValue()[0]);
+        }
     };
 
 
@@ -214,13 +228,17 @@ public class BluetoothLowEnergy {
      * ===========================================================================================
      */
 
-    public byte[] getData() {
+    public byte getData() {
         return data;
     }
 
     public BluetoothDevice getBleDevice(){
         return bleDevice;
     }
+
+    public int getPackageNumber(){ return packageNumber; }
+
+    public void setPackageNumber(int packageNumber) { this.packageNumber = packageNumber; }
 
 
     /**

@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
+            NewData nd = (NewData) adapter.getNewData();
             switch (action) {
                 case ACTION_CONNECT_REQUEST:
                     progressDialog.show();
@@ -111,18 +112,31 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case ACTION_SERVICES_DISCOVERED:
                     progressDialog.dismiss();
-                    NewData nd = (NewData) adapter.getNewData();
+
                     nd.enableGetDataButton();
                     nd.setDisconnect();
                     ble.initializeServiceAndCharacteristic();
                     break;
                 case ACTION_DATA_RECEIVED:
+                    if(ble.getPackageNumber() == 1){
+                        nd.setIntegerPart((int)ble.getData());
+                    }else if(ble.getPackageNumber() == 2){
+                        progressDialog.dismiss();
+                        nd.setDecimalPart((int)ble.getData());
+                        ble.setPackageNumber(0);
+                        nd.showSendTemperatureOptions();
+                    }
                     break;
                 case ACTION_DISCONNECTING:
+                    ble.disconnect();
                     break;
                 case ACTION_DISCONNECTED:
+                    nd.setConnect();
+                    nd.resetWidgets();
                     break;
                 case ACTION_GET_TEMPERATURE:
+                    progressDialog.setMessage(getString(R.string.getting_temp));
+                    progressDialog.show();
                     ble.askForData();
                     break;
                 case ACTION_BLE_SCAN_HAS_BEEN_FINISHED:
@@ -132,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case ACTION_CHARACTERISTIC_WROTE:
+                    ble.enableCharacteristicNotification();
                     break;
             }
         }
