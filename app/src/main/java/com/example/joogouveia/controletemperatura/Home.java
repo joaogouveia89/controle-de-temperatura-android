@@ -1,5 +1,9 @@
 package com.example.joogouveia.controletemperatura;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,12 +16,20 @@ import android.widget.TextView;
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
 import com.example.joogouveia.controletemperatura.api.model.Temperature;
+import com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CHARACTERISTIC_WROTE;
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECTED;
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_DATA_RECEIVED;
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_SERVICES_DISCOVERED;
 
 
 public class Home extends AppCompatActivity implements View.OnClickListener{
@@ -31,7 +43,12 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     private ImageButton getTemperatureButton, getSummaryButton, helpButton, saveButton, researchButton;
     private TextView lastTemperatureTitle, lastTemperatureTemperature, lastTemperatureTimestamp;
     private ProgressBar progressBar;
-    private float temperature;
+
+    private BluetoothLowEnergy ble;
+
+    private String temperature = "";
+    private String date;
+    private String hour;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +59,27 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         initializeMontSerratFont();
 
         getLastTemperatureMeasured();
+
+        ble = new BluetoothLowEnergy(this);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        getLastTemperatureMeasured();
+    }
+
+    @Override
+    protected void onResume(){
+        super.onResume();
+
+        final IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_CONNECTED);
+        filter.addAction(ACTION_SERVICES_DISCOVERED);
+        filter.addAction(ACTION_CHARACTERISTIC_WROTE);
+        filter.addAction(ACTION_DATA_RECEIVED);
+
+        registerReceiver(mBleUpdateReceiver, filter);
     }
 
     @Override
@@ -50,6 +88,9 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
 
         switch (id){
             case R.id.bt_getTemp:
+                if(!bleConnect){
+                    connectAndGetTemp();
+                }
                 break;
         }
     }
@@ -85,8 +126,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         researchButton.setOnClickListener(this);
 
 
-        saveButton.setVisibility(View.INVISIBLE);
-        researchButton.setVisibility(View.INVISIBLE);
+        visibleSaveAndResearchButtons(View.INVISIBLE);
     }
 
 
@@ -120,4 +160,63 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         saveButton.setEnabled(enable);
         researchButton.setEnabled(enable);
     }
+
+    private void connectAndGetTemp(){
+        progressBar.setVisibility(View.VISIBLE);
+        enabledisableAllButtons(false);
+        ble.seekAndConnect();
+    }
+
+    private void visibleSaveAndResearchButtons(int status){
+        saveButton.setVisibility(status);
+        researchButton.setVisibility(status);
+    }
+
+
+
+
+    private final BroadcastReceiver mBleUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            switch (action){
+                case ACTION_CONNECTED:
+                    bleConnect = true;
+                    ble.discoverServices();
+                    break;
+                case ACTION_SERVICES_DISCOVERED:
+                    getTemperatureButton.setBackgroundResource(R.drawable.selector_disconnection_button);
+                    ble.initializeServiceAndCharacteristic();
+                    ble.askForData();
+                    break;
+
+                case ACTION_CHARACTERISTIC_WROTE:
+                    ble.enableCharacteristicNotification();
+                    break;
+                case ACTION_DATA_RECEIVED:
+                    if((int)ble.getData() != 85){
+                        if(ble.getPackageNumber() == 1){
+                            temperature += ble.getData() + ".";
+                        }else if(ble.getPackageNumber() == 2){
+                            long milis = System.currentTimeMillis();
+                            progressBar.setVisibility(View.INVISIBLE);
+                            enabledisableAllButtons(true);
+                            temperature += ble.getData();
+                            ble.setPackageNumber(0);
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                            SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+                            Date currentTimestamp = new Date(milis);
+
+                            date = dateFormat.format(currentTimestamp);
+                            hour = hourFormat.format(currentTimestamp);
+
+                            lastTemperatureTemperature.setText(temperature + " ºC");
+                            lastTemperatureTimestamp.setText(date + " - " + hour);
+                            visibleSaveAndResearchButtons(View.VISIBLE);
+                        }
+                    }
+                    break;
+            }
+        }
+    };
 }
