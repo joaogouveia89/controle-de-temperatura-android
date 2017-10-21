@@ -27,6 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_BLE_SCAN_HAS_BEEN_FINISHED;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CHARACTERISTIC_WROTE;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECTED;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_DATA_RECEIVED;
@@ -79,6 +80,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         filter.addAction(ACTION_SERVICES_DISCOVERED);
         filter.addAction(ACTION_CHARACTERISTIC_WROTE);
         filter.addAction(ACTION_DATA_RECEIVED);
+        filter.addAction(ACTION_BLE_SCAN_HAS_BEEN_FINISHED);
 
         registerReceiver(mBleUpdateReceiver, filter);
     }
@@ -225,6 +227,14 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
 
                 case ACTION_CHARACTERISTIC_WROTE:
                     ble.enableCharacteristicNotification(true);
+                    break;
+                case ACTION_BLE_SCAN_HAS_BEEN_FINISHED:
+                    if(ble.getBleDevice() == null){
+                        progressBar.setVisibility(View.INVISIBLE);
+                        enabledisableAllButtons(true);
+                        Toast t = Toast.makeText(Home.this, "Termometro nao encontrado!", Toast.LENGTH_SHORT);
+                        t.show();
+                    }
                     break;
                 case ACTION_DATA_RECEIVED:
                     if((int)ble.getData() != 85 && (int)ble.getData() != 0){
