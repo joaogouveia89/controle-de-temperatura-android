@@ -1,4 +1,4 @@
 # controle-de-temperatura-android
 App to get temperature from the Arduino and send it to the API
 
-![image](https://imgur.com/a/BEcX9)
+[screenshot]("https://imgur.com/a/BEcX9")
