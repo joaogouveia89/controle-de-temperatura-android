@@ -227,7 +227,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                     ble.enableCharacteristicNotification(true);
                     break;
                 case ACTION_DATA_RECEIVED:
-                    if((int)ble.getData() != 85){
+                    if((int)ble.getData() != 85 && (int)ble.getData() != 0){
                         if(ble.getPackageNumber() == 1){
                             temperature += ble.getData() + ".";
                         }else if(ble.getPackageNumber() == 2){
