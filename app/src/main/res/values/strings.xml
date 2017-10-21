@@ -12,4 +12,6 @@
     <string name="error">Erro na chamada do servidor</string>
     <string name="saved_success">Salvo</string>
     <string name="last_measure">Ultima medição</string>
+
+    <string name="nodata">---</string>
 </resources>

@@ -2,11 +2,16 @@ package com.example.joogouveia.controletemperatura.api;
 
 import com.example.joogouveia.controletemperatura.api.model.Temperature;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
+import retrofit2.http.Url;
 
 /**
  * Created by João Gouveia on 20/10/2017.
@@ -20,4 +25,7 @@ public interface RetrofitService {
                                        @Field("date") String date,
                                        @Field("hour") String hour,
                                        @Field("token") String token);
+
+    @GET
+    Call<List<Temperature>> getLastTemperature(@Url String url);
 }

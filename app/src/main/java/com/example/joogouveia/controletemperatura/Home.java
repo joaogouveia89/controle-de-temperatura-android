@@ -3,20 +3,35 @@ package com.example.joogouveia.controletemperatura;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.joogouveia.controletemperatura.api.RetrofitService;
+import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
+import com.example.joogouveia.controletemperatura.api.model.Temperature;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class Home extends AppCompatActivity implements View.OnClickListener{
+
+    private static final String TAG = "HomeActivity";
+    private static final String API_TOKEN = "u^[Y]e^v^KeQ]TV";
 
     //control variables
     boolean bleConnect = false;
 
-    ImageButton getTemperatureButton, getSummaryButton, helpButton, saveButton, researchButton;
-    TextView lastTemperatureTitle, lastTemperatureTemperature, lastTemperatureTimestamp;
-    ProgressBar progressBar;
+    private ImageButton getTemperatureButton, getSummaryButton, helpButton, saveButton, researchButton;
+    private TextView lastTemperatureTitle, lastTemperatureTemperature, lastTemperatureTimestamp;
+    private ProgressBar progressBar;
+    private float temperature;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +40,8 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
 
         initializeWidgets();
         initializeMontSerratFont();
+
+        getLastTemperatureMeasured();
     }
 
     @Override
@@ -70,6 +87,30 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
 
         saveButton.setVisibility(View.INVISIBLE);
         researchButton.setVisibility(View.INVISIBLE);
+    }
+
+
+    private void getLastTemperatureMeasured(){
+
+        RetrofitService service = ServiceGenerator.createService(RetrofitService.class);
+        Call<List<Temperature>> call = service.getLastTemperature("https://controle-temperatura.herokuapp.com/api/lasttemperature/" + API_TOKEN);
+
+        progressBar.setVisibility(View.VISIBLE);
+        enabledisableAllButtons(false);
+        call.enqueue(new Callback<List<Temperature>>() {
+            @Override
+            public void onResponse(Call<List<Temperature>> call, Response<List<Temperature>> response) {
+                lastTemperatureTemperature.setText(response.body().get(0).getTemperature() + "ºC");
+                lastTemperatureTimestamp.setText(response.body().get(0).getDate() + " - " + response.body().get(0).getHour());
+                progressBar.setVisibility(View.INVISIBLE);
+                enabledisableAllButtons(true);
+            }
+
+            @Override
+            public void onFailure(Call<List<Temperature>> call, Throwable t) {
+                Log.i(TAG, "FAILURE!");
+            }
+        });
     }
 
     private void enabledisableAllButtons(boolean enable){
