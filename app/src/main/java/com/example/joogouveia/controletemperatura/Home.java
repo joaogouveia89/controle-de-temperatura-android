@@ -224,7 +224,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                     break;
 
                 case ACTION_CHARACTERISTIC_WROTE:
-                    ble.enableCharacteristicNotification();
+                    ble.enableCharacteristicNotification(true);
                     break;
                 case ACTION_DATA_RECEIVED:
                     if((int)ble.getData() != 85){
@@ -246,6 +246,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                             lastTemperatureTemperature.setText(temperature + " ºC");
                             lastTemperatureTimestamp.setText(date + " - " + hour);
                             visibleSaveAndResearchButtons(View.VISIBLE);
+                            ble.enableCharacteristicNotification(false);
                         }
                     }
                     break;

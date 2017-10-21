@@ -155,8 +155,8 @@ public class BluetoothLowEnergy {
         service = bleGatt.getService(serviceUUID);
         characteristic = service.getCharacteristic(characteristicUUID);
     }
-    public void enableCharacteristicNotification(){
-        bleGatt.setCharacteristicNotification(characteristic, true);
+    public void enableCharacteristicNotification(boolean status){
+        bleGatt.setCharacteristicNotification(characteristic, status);
     }
 
     public void askForData(){

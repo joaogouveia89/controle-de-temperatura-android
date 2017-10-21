@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 case ACTION_CHARACTERISTIC_WROTE:
-                    ble.enableCharacteristicNotification();
+                    ble.enableCharacteristicNotification(true);
                     break;
                 case ACTION_SAVING_TEMPERATURE:
                     progressDialog.setMessage(getString(R.string.saving));
