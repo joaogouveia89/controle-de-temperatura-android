@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
@@ -92,6 +93,9 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                     connectAndGetTemp();
                 }
                 break;
+            case R.id.bt_save:
+                saveData();
+                break;
         }
     }
 
@@ -170,6 +174,35 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     private void visibleSaveAndResearchButtons(int status){
         saveButton.setVisibility(status);
         researchButton.setVisibility(status);
+    }
+
+
+    private void saveData(){
+        RetrofitService service = ServiceGenerator.createService(RetrofitService.class);
+
+        progressBar.setVisibility(View.VISIBLE);
+        enabledisableAllButtons(false);
+        Call<Temperature> call = service.sendTemperature(temperature, date, hour, API_TOKEN);
+
+        call.enqueue(new Callback<Temperature>() {
+            @Override
+            public void onResponse(Call<Temperature> call, Response<Temperature> response) {
+                Log.i("NEW DATA", "SUCCESSFULL");
+                progressBar.setVisibility(View.INVISIBLE);
+                enabledisableAllButtons(true);
+                if(response.isSuccessful()){
+                    if(response.raw().message().equals("OK")){
+                        saveButton.setEnabled(false);
+                        Toast.makeText(Home.this,getString(R.string.saved_success), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Temperature> call, Throwable t) {
+                Toast.makeText(Home.this,getString(R.string.error), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
