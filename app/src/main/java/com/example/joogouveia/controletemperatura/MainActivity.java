@@ -19,6 +19,8 @@ import android.widget.TableLayout;
 import com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy;
 
 import static com.example.joogouveia.controletemperatura.NewData.ACTION_GET_TEMPERATURE;
+import static com.example.joogouveia.controletemperatura.NewData.ACTION_RETROFIT_REQUEST_FINISHED;
+import static com.example.joogouveia.controletemperatura.NewData.ACTION_SAVING_TEMPERATURE;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_BLE_SCAN_HAS_BEEN_FINISHED;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CHARACTERISTIC_WROTE;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECTED;
@@ -87,7 +89,9 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(BluetoothLowEnergy.ACTION_BLE_SCAN_HAS_BEEN_FINISHED);
         filter.addAction(BluetoothLowEnergy.ACTION_CHARACTERISTIC_WROTE);
         filter.addAction(BluetoothLowEnergy.ACTION_CONNECT_REQUEST);
+        filter.addAction(ACTION_SAVING_TEMPERATURE);
         filter.addAction(ACTION_GET_TEMPERATURE);
+        filter.addAction(ACTION_RETROFIT_REQUEST_FINISHED);
         registerReceiver(mBleUpdateReceiver, filter);
     }
 
@@ -147,6 +151,14 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case ACTION_CHARACTERISTIC_WROTE:
                     ble.enableCharacteristicNotification();
+                    break;
+                case ACTION_SAVING_TEMPERATURE:
+                    progressDialog.setMessage(getString(R.string.saving));
+                    progressDialog.show();
+                    break;
+
+                case ACTION_RETROFIT_REQUEST_FINISHED:
+                    progressDialog.dismiss();
                     break;
             }
         }

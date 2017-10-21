@@ -7,11 +7,24 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.joogouveia.controletemperatura.api.RetrofitService;
+import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
+import com.example.joogouveia.controletemperatura.api.model.Temperature;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECT_REQUEST;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_DISCONNECTED;
@@ -34,6 +47,14 @@ public class NewData extends Fragment implements View.OnClickListener{
 
     public static final String ACTION_GET_TEMPERATURE =
             "com.example.joogouveia.controletemperatura.newdata.ACTION_GET_TEMPERATURE";
+    public static final String ACTION_SAVING_TEMPERATURE =
+            "com.example.joogouveia.controletemperatura.newdata.ACTION_SAVING_TEMPERATURE";
+    public static final String ACTION_RETROFIT_REQUEST_FINISHED =
+            "com.example.joogouveia.controletemperatura.newdata.ACTION_RETROFIT_REQUEST_FINISHED";
+
+
+
+    private static final String API_TOKEN = "u^[Y]e^v^KeQ]TV";
 
     private Context appCtx;
 
@@ -130,6 +151,10 @@ public class NewData extends Fragment implements View.OnClickListener{
             case R.id.bt_getTemp:
                 broadcastUpdate(ACTION_GET_TEMPERATURE);
                 break;
+
+            case R.id.bt_send:
+                retrofitConverter();
+                break;
         }
     }
 
@@ -177,5 +202,35 @@ public class NewData extends Fragment implements View.OnClickListener{
         temperatureTextView.setVisibility(View.INVISIBLE);
         sendButton.setVisibility(View.INVISIBLE);
         requestButton.setEnabled(false);
+    }
+
+    public void retrofitConverter(){
+        String temperature = integerPart + "." + decimalPart;
+        long milis = System.currentTimeMillis();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+        Date currentTimestamp = new Date(milis);
+        RetrofitService service = ServiceGenerator.createService(RetrofitService.class);
+
+        broadcastUpdate(ACTION_SAVING_TEMPERATURE);
+        Call<Temperature> call = service.sendTemperature(temperature, dateFormat.format(currentTimestamp), hourFormat.format(currentTimestamp), API_TOKEN);
+
+        call.enqueue(new Callback<Temperature>() {
+            @Override
+            public void onResponse(Call<Temperature> call, Response<Temperature> response) {
+                Log.i("NEW DATA", "SUCCESSFULL");
+                broadcastUpdate(ACTION_RETROFIT_REQUEST_FINISHED);
+                if(response.isSuccessful()){
+                    if(response.raw().message().equals("OK")){
+                        Toast.makeText(appCtx,getString(R.string.saved_success), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Temperature> call, Throwable t) {
+                Toast.makeText(appCtx,getString(R.string.error), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
