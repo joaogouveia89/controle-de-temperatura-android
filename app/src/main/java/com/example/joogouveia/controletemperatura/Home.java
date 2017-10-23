@@ -98,6 +98,13 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
             case R.id.bt_save:
                 saveData();
                 break;
+
+            case R.id.bt_research:
+                temperature = "";
+                progressBar.setVisibility(View.VISIBLE);
+                enabledisableAllButtons(false);
+                ble.askForData();
+                break;
         }
     }
 
@@ -237,7 +244,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                     }
                     break;
                 case ACTION_DATA_RECEIVED:
-                    if((int)ble.getData() != 85 && (int)ble.getData() != 0){
+                    if((int)ble.getData() != 85){
                         if(ble.getPackageNumber() == 1){
                             temperature += ble.getData() + ".";
                         }else if(ble.getPackageNumber() == 2){
