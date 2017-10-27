@@ -1,4 +1,4 @@
-package com.example.joogouveia.controletemperatura;
+package com.example.joogouveia.controletemperatura.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.joogouveia.controletemperatura.R;
 import com.example.joogouveia.controletemperatura.adapters.TemperatureAdapter;
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
