@@ -2,3 +2,4 @@
 App to get temperature from the Arduino and send it to the API
 
 ![Screenshot](https://i.imgur.com/RrsKK5b.png)
+![Screenshot](https://i.imgur.com/g4RSoGx.png)
