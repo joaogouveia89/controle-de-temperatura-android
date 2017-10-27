@@ -2,18 +2,24 @@ package com.example.joogouveia.controletemperatura;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.joogouveia.controletemperatura.adapters.TemperatureAdapter;
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
 import com.example.joogouveia.controletemperatura.api.model.Temperature;
@@ -45,6 +51,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     private ImageButton getTemperatureButton, getSummaryButton, helpButton, saveButton, researchButton;
     private TextView lastTemperatureTitle, lastTemperatureTemperature, lastTemperatureTimestamp;
     private ProgressBar progressBar;
+    private RecyclerView mRecyclerView;
 
     private BluetoothLowEnergy ble;
 
@@ -105,6 +112,10 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
                 enabledisableAllButtons(false);
                 ble.askForData();
                 break;
+
+            case R.id.bt_getSummary:
+                getTemperaturesList();
+               break;
         }
     }
 
@@ -162,6 +173,50 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
             @Override
             public void onFailure(Call<List<Temperature>> call, Throwable t) {
                 Log.i(TAG, "FAILURE!");
+            }
+        });
+    }
+
+    private void getTemperaturesList(){
+        progressBar.setVisibility(View.VISIBLE);
+        enabledisableAllButtons(false);
+        RetrofitService service = ServiceGenerator.createService(RetrofitService.class);
+        Call<List<Temperature>> call = service.getTemperatures("https://controle-temperatura.herokuapp.com/api/temperatures/" + API_TOKEN);
+
+        call.enqueue(new Callback<List<Temperature>>() {
+            @Override
+            public void onResponse(Call<List<Temperature>> call, final Response<List<Temperature>> response) {
+                //dialog creation
+                LayoutInflater inflater = getLayoutInflater();
+                AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
+                builder.setTitle(getString(R.string.measures));
+                View inflated = inflater.inflate(R.layout.temperatures_list, null);
+                mRecyclerView = (RecyclerView) inflated.findViewById(R.id.rv_temperatures_list);
+                mRecyclerView.setHasFixedSize(true);
+
+                LinearLayoutManager llm = new LinearLayoutManager(Home.this);
+                llm.setOrientation(LinearLayoutManager.VERTICAL);
+                mRecyclerView.setLayoutManager(llm);
+
+                TemperatureAdapter mTemperatureAdapter = new TemperatureAdapter(Home.this, response.body());
+                mRecyclerView.setAdapter(mTemperatureAdapter);
+                builder.setView(inflated);
+                //tvList = (TextView) inflated.findViewById(R.id.tvList);
+                builder.setNeutralButton(getString(R.string.dismiss), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                builder.create();
+                builder.show();
+                progressBar.setVisibility(View.INVISIBLE);
+                enabledisableAllButtons(true);
+            }
+
+            @Override
+            public void onFailure(Call<List<Temperature>> call, Throwable t) {
+
             }
         });
     }

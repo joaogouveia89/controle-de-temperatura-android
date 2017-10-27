@@ -28,4 +28,7 @@ public interface RetrofitService {
 
     @GET
     Call<List<Temperature>> getLastTemperature(@Url String url);
+
+    @GET
+    Call<List<Temperature>> getTemperatures(@Url String url);
 }
