@@ -1,11 +1,14 @@
 package com.example.joogouveia.controletemperatura.activities;
 
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,8 +21,11 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v4.app.FragmentManager;
 
 import com.example.joogouveia.controletemperatura.R;
+import com.example.joogouveia.controletemperatura.Summary;
+import com.example.joogouveia.controletemperatura.adapters.FragmentPager;
 import com.example.joogouveia.controletemperatura.adapters.TemperatureAdapter;
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
@@ -34,6 +40,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.joogouveia.controletemperatura.Summary.NEXT;
+import static com.example.joogouveia.controletemperatura.Summary.PREVIOUS;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_BLE_SCAN_HAS_BEEN_FINISHED;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CHARACTERISTIC_WROTE;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECTED;
@@ -41,7 +49,9 @@ import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_SERVICES_DISCOVERED;
 
 
-public class Home extends AppCompatActivity implements View.OnClickListener{
+public class Home extends AppCompatActivity implements View.OnClickListener,
+        Summary.OnFragmentInteractionListener,
+        ViewPager.OnPageChangeListener{
 
     private static final String TAG = "HomeActivity";
     private static final String API_TOKEN = "u^[Y]e^v^KeQ]TV";
@@ -53,6 +63,9 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
     private TextView lastTemperatureTitle, lastTemperatureTemperature, lastTemperatureTimestamp;
     private ProgressBar progressBar;
     private RecyclerView mRecyclerView;
+    private ViewPager pager;
+    private FragmentPager fpager;
+    private Summary summaryFragment;
 
     private BluetoothLowEnergy ble;
 
@@ -71,6 +84,14 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         getLastTemperatureMeasured();
 
         ble = new BluetoothLowEnergy(this);
+
+        FragmentManager fm = getSupportFragmentManager();
+        fpager = new FragmentPager(fm);
+
+        pager.setAdapter(fpager);
+        pager.setCurrentItem(1);
+
+        pager.addOnPageChangeListener(this);
     }
 
     @Override
@@ -133,6 +154,7 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
         helpButton                      = (ImageButton) findViewById(R.id.bt_help);
         saveButton                      = (ImageButton) findViewById(R.id.bt_save);
         researchButton                  = (ImageButton) findViewById(R.id.bt_research);
+        pager                           = (ViewPager) findViewById(R.id.vp_summary);
 
 
         lastTemperatureTitle = (TextView) findViewById(R.id.tv_lastMeasureTitle);
@@ -326,4 +348,31 @@ public class Home extends AppCompatActivity implements View.OnClickListener{
             }
         }
     };
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        summaryFragment = fpager.getSummaryFragment();
+        if(position == 2){
+            summaryFragment.setChangeFrame(NEXT);
+            pager.setCurrentItem(1);
+        }else if(position == 0){
+            summaryFragment.setChangeFrame(PREVIOUS);
+            pager.setCurrentItem(1);
+        }
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
 }

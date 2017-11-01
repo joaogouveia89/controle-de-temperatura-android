@@ -4,9 +4,15 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.example.joogouveia.controletemperatura.custom.calendar.CustomCalendar;
+
+import java.util.Calendar;
 
 
 /**
@@ -22,6 +28,18 @@ public class Summary extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
+    public static final int PREVIOUS = 0;
+    public static final int CURRENT = 1;
+    public static final int NEXT = 2;
+    private int changeFrame = CURRENT;
+
+    private TextView fragmentTitle;
+    private View view;
+
+
+    private Calendar cal = Calendar.getInstance();
+    private CustomCalendar calendar = new CustomCalendar(cal.get(Calendar.MONTH) + 1, cal.get(Calendar.YEAR)); //current Date;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -58,13 +76,17 @@ public class Summary extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_summary, container, false);
+        view = inflater.inflate(R.layout.fragment_summary, container, false);
+        fragmentTitle = (TextView) view.findViewById(R.id.titleLabel);
+        fragmentTitle.setText(calendar.getMonthStringPtBr() + " " + calendar.getCurrentYear());
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +111,21 @@ public class Summary extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public int getChangeFrame() {
+        return changeFrame;
+    }
+
+    public void setChangeFrame(int changeFrame) {
+        this.changeFrame = changeFrame;
+        if(changeFrame == NEXT){
+            calendar.advanceOneMonth();
+        }else if(changeFrame == PREVIOUS){
+            calendar.regressOneMonth();
+        }
+        fragmentTitle.setText(calendar.getMonthStringPtBr() + " " + calendar.getCurrentYear());
+        Log.i("SUMMA", calendar.getMonthStringPtBr() + " de " + calendar.getCurrentYear());
     }
 
     /**
