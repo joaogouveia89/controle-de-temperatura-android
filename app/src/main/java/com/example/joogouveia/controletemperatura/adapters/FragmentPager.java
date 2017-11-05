@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
 
+import com.example.joogouveia.controletemperatura.SumTransition;
 import com.example.joogouveia.controletemperatura.Summary;
 import com.example.joogouveia.controletemperatura.custom.calendar.CustomCalendar;
 
@@ -33,7 +34,7 @@ public class FragmentPager extends FragmentPagerAdapter {
         if(position == 1){
             summaryFragment = new Summary();
         }else{
-            return new Summary();
+            return new SumTransition();
         }
         return summaryFragment;
     }

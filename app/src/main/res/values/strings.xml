@@ -17,6 +17,9 @@
 
     <string name="nodata">---</string>
 
+    <string name="day">Dia</string>
+    <string name="temperature">Temperatura</string>
+
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

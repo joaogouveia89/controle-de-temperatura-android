@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.support.v4.app.FragmentManager;
 
 import com.example.joogouveia.controletemperatura.R;
+import com.example.joogouveia.controletemperatura.SumTransition;
 import com.example.joogouveia.controletemperatura.Summary;
 import com.example.joogouveia.controletemperatura.adapters.FragmentPager;
 import com.example.joogouveia.controletemperatura.adapters.TemperatureAdapter;
@@ -51,10 +52,11 @@ import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.
 
 public class Home extends AppCompatActivity implements View.OnClickListener,
         Summary.OnFragmentInteractionListener,
-        ViewPager.OnPageChangeListener{
+        ViewPager.OnPageChangeListener,
+        SumTransition.OnFragmentInteractionListener{
 
     private static final String TAG = "HomeActivity";
-    private static final String API_TOKEN = "u^[Y]e^v^KeQ]TV";
+    public static final String API_TOKEN = "u^[Y]e^v^KeQ]TV";
 
     //control variables
     boolean bleConnect = false;
