@@ -20,6 +20,7 @@
     <string name="day">Dia</string>
     <string name="temperature">Temperatura</string>
     <string name="no_data_available">Sem dados disponiveis</string>
+    <string name="help_title">Informações</string>
 
 
     <!-- TODO: Remove or change this placeholder text -->

@@ -1,4 +1,4 @@
-package com.example.joogouveia.controletemperatura;
+package com.example.joogouveia.controletemperatura.fragments;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.joogouveia.controletemperatura.R;
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
 import com.example.joogouveia.controletemperatura.api.model.Temperature;
@@ -25,7 +26,6 @@ import com.github.mikephil.charting.data.BarEntry;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -156,7 +156,7 @@ public class Summary extends Fragment {
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
+     * to the activity and potentially other com.example.joogouveia.controletemperatura.fragments contained in that
      * activity.
      * <p>
      * See the Android Training lesson <a href=

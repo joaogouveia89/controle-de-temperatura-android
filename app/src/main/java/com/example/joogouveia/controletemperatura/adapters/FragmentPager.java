@@ -1,18 +1,13 @@
 package com.example.joogouveia.controletemperatura.adapters;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 import com.example.joogouveia.controletemperatura.SumTransition;
-import com.example.joogouveia.controletemperatura.Summary;
-import com.example.joogouveia.controletemperatura.custom.calendar.CustomCalendar;
+import com.example.joogouveia.controletemperatura.fragments.Summary;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by João Gouveia on 31/10/2017.

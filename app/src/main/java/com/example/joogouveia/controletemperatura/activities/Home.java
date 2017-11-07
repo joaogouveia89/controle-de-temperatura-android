@@ -25,7 +25,7 @@ import android.support.v4.app.FragmentManager;
 
 import com.example.joogouveia.controletemperatura.R;
 import com.example.joogouveia.controletemperatura.SumTransition;
-import com.example.joogouveia.controletemperatura.Summary;
+import com.example.joogouveia.controletemperatura.fragments.Summary;
 import com.example.joogouveia.controletemperatura.adapters.FragmentPager;
 import com.example.joogouveia.controletemperatura.adapters.TemperatureAdapter;
 import com.example.joogouveia.controletemperatura.api.RetrofitService;
@@ -41,8 +41,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.example.joogouveia.controletemperatura.Summary.NEXT;
-import static com.example.joogouveia.controletemperatura.Summary.PREVIOUS;
+import static com.example.joogouveia.controletemperatura.fragments.Summary.NEXT;
+import static com.example.joogouveia.controletemperatura.fragments.Summary.PREVIOUS;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_BLE_SCAN_HAS_BEEN_FINISHED;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CHARACTERISTIC_WROTE;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_CONNECTED;
@@ -140,6 +140,10 @@ public class Home extends AppCompatActivity implements View.OnClickListener,
             case R.id.bt_getSummary:
                 getTemperaturesList();
                break;
+
+            case R.id.bt_help:
+                openInformationModal();
+                break;
         }
     }
 
@@ -376,5 +380,22 @@ public class Home extends AppCompatActivity implements View.OnClickListener,
     @Override
     public void onPageScrollStateChanged(int state) {
 
+    }
+
+    private void openInformationModal(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View v = inflater.inflate(R.layout.help_layout, null);
+        builder.setView(v);
+        builder.setTitle(getString(R.string.help_title));
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        builder.create();
+        builder.show();
     }
 }
