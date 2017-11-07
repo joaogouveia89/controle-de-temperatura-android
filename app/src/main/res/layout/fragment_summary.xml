@@ -17,10 +17,10 @@
             android:textColor="@color/white"
             android:textSize="15dp" />
 
-        <lecho.lib.hellocharts.view.ColumnChartView
+        <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"></com.github.mikephil.charting.charts.BarChart>
 
 
     </LinearLayout>

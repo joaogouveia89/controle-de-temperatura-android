@@ -1,6 +1,7 @@
 package com.example.joogouveia.controletemperatura;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,18 +15,18 @@ import com.example.joogouveia.controletemperatura.api.RetrofitService;
 import com.example.joogouveia.controletemperatura.api.ServiceGenerator;
 import com.example.joogouveia.controletemperatura.api.model.Temperature;
 import com.example.joogouveia.controletemperatura.custom.calendar.CustomCalendar;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
-import lecho.lib.hellocharts.model.Axis;
-import lecho.lib.hellocharts.model.AxisValue;
-import lecho.lib.hellocharts.model.Column;
-import lecho.lib.hellocharts.model.ColumnChartData;
-import lecho.lib.hellocharts.model.SubcolumnValue;
-import lecho.lib.hellocharts.util.ChartUtils;
-import lecho.lib.hellocharts.view.ColumnChartView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,13 +55,8 @@ public class Summary extends Fragment {
 
     private TextView fragmentTitle;
     private View view;
-    private ColumnChartView columnChartView;
 
-    private ColumnChartData data;
-    private boolean hasAxes = true;
-    private boolean hasAxesNames = true;
-    private boolean hasLabels = false;
-    private boolean hasLabelForSelected = false;
+    private BarChart barChart;
 
 
     private Calendar cal = Calendar.getInstance();
@@ -111,8 +107,9 @@ public class Summary extends Fragment {
         view = inflater.inflate(R.layout.fragment_summary, container, false);
         fragmentTitle = (TextView) view.findViewById(R.id.titleLabel);
         fragmentTitle.setText(calendar.getMonthStringPtBr() + " " + calendar.getCurrentYear());
-        columnChartView = (ColumnChartView) view.findViewById(R.id.chart);
         fetchMonthData(calendar.getCurrentMonth(), calendar.getCurrentYear());
+        barChart = (BarChart) view.findViewById(R.id.chart);
+        chartConfigs();
         return view;
     }
 
@@ -189,87 +186,31 @@ public class Summary extends Fragment {
     }
 
     private void setChartData(List<Temperature> temperatures){
-        int subColumns = 1;
-        int numColums = temperatures.size();
-
-        List<Column> columns = new ArrayList<Column>();
-        List<SubcolumnValue> values;
-        List<AxisValue> axisXValues = new ArrayList<AxisValue>();
-
-        for(int i = 0; i < numColums; ++i){
-
-            values = new ArrayList<SubcolumnValue>();
-            for(int j = 0; j < subColumns; ++j){
-                SubcolumnValue val = new SubcolumnValue(Float.parseFloat(temperatures.get(i).getTemperature()), ChartUtils.pickColor());
-                values.add(val);
-                String[] dateTemp = temperatures.get(i).getDate().split("/");
-                AxisValue axval = new AxisValue(Float.parseFloat(dateTemp[0]));
-                Log.i("SUMMARY", "VAL = " + dateTemp[0]);
-                axval.setLabel(dateTemp[0]);
-                axisXValues.add(axval);
-            }
-            Column column = new Column(values);
-            column.setHasLabels(hasLabels);
-            column.setHasLabelsOnlyForSelected(hasLabelForSelected);
-            columns.add(column);
+        List<BarEntry> temps = new ArrayList<BarEntry>();
+        for(Temperature temperature : temperatures){
+            BarEntry barEntry = new BarEntry(
+                    Float.parseFloat(temperature.getDate().split("/")[0]),
+                    Float.parseFloat(temperature.getTemperature())
+            );
+            temps.add(barEntry);
         }
 
-        data = new ColumnChartData(columns);
-
-        if (hasAxes) {
-            Axis axisX = new Axis();
-            Axis axisY = new Axis().setHasLines(true);
-            if (hasAxesNames) {
-                axisX.setName(getString(R.string.day));
-                axisY.setName(getString(R.string.temperature));
-            }
-            data.setAxisXBottom(axisX);
-            data.setAxisYLeft(axisY);
-            //axisX.setValues(axisXValues);
-        } else {
-            data.setAxisXBottom(null);
-            data.setAxisYLeft(null);
-        }
-        columnChartView.setColumnChartData(data);
-
+        BarDataSet dataSet = new BarDataSet(temps, getString(R.string.temperature));
+        dataSet.setValueTextColor(Color.WHITE);
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+        barChart.invalidate();
     }
 
-    private void generateDefaultData() {
-        int numSubcolumns = 1;
-        int numColumns = 30;
-        // Column can have many subcolumns, here by default I use 1 subcolumn in each of 8 columns.
-        List<Column> columns = new ArrayList<Column>();
-        List<SubcolumnValue> values;
-        for (int i = 0; i < numColumns; ++i) {
+    private void chartConfigs(){
+        Description description = new Description();
+        description.setText("");
 
-            values = new ArrayList<SubcolumnValue>();
-            for (int j = 0; j < numSubcolumns; ++j) {
-                values.add(new SubcolumnValue((float) Math.random() * 50f + 5, ChartUtils.pickColor()));
-            }
-
-            Column column = new Column(values);
-            column.setHasLabels(hasLabels);
-            column.setHasLabelsOnlyForSelected(hasLabelForSelected);
-            columns.add(column);
-        }
-
-        data = new ColumnChartData(columns);
-
-        if (hasAxes) {
-            Axis axisX = new Axis();
-            Axis axisY = new Axis().setHasLines(true);
-            if (hasAxesNames) {
-                axisX.setName(getString(R.string.day));
-                axisY.setName(getString(R.string.temperature));
-            }
-            data.setAxisXBottom(axisX);
-            data.setAxisYLeft(axisY);
-        } else {
-            data.setAxisXBottom(null);
-            data.setAxisYLeft(null);
-        }
-
-        columnChartView.setColumnChartData(data);
-
+        barChart.setNoDataText(getString(R.string.no_data_available));
+        barChart.getXAxis().setTextColor(Color.WHITE);
+        barChart.getAxisRight().setEnabled(false);
+        barChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTH_SIDED.BOTTOM);
+        barChart.getAxisLeft().setTextColor(Color.WHITE);
+        barChart.setDescription(description);
     }
 }
