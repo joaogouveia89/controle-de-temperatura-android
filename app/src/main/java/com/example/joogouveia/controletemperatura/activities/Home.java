@@ -41,6 +41,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_DISCONNECTED;
 import static com.example.joogouveia.controletemperatura.fragments.Summary.NEXT;
 import static com.example.joogouveia.controletemperatura.fragments.Summary.PREVIOUS;
 import static com.example.joogouveia.controletemperatura.ble.BluetoothLowEnergy.ACTION_BLE_SCAN_HAS_BEEN_FINISHED;
@@ -124,6 +125,8 @@ public class Home extends AppCompatActivity implements View.OnClickListener,
             case R.id.bt_getTemp:
                 if(!bleConnect){
                     connectAndGetTemp();
+                }else{
+                    disconnect();
                 }
                 break;
             case R.id.bt_save:
@@ -264,6 +267,12 @@ public class Home extends AppCompatActivity implements View.OnClickListener,
         ble.seekAndConnect();
     }
 
+    private void disconnect(){
+        progressBar.setVisibility(View.VISIBLE);
+        enabledisableAllButtons(false);
+        ble.disconnect();
+    }
+
     private void visibleSaveAndResearchButtons(int status){
         saveButton.setVisibility(status);
         researchButton.setVisibility(status);
@@ -318,6 +327,11 @@ public class Home extends AppCompatActivity implements View.OnClickListener,
 
                 case ACTION_CHARACTERISTIC_WROTE:
                     ble.enableCharacteristicNotification(true);
+                    break;
+                case ACTION_DISCONNECTED:
+                    bleConnect = false;
+                    enabledisableAllButtons(true);
+                    getTemperatureButton.setBackgroundResource(R.drawable.selector_connection_button);
                     break;
                 case ACTION_BLE_SCAN_HAS_BEEN_FINISHED:
                     if(ble.getBleDevice() == null){
