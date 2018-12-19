@@ -1,4 +1,4 @@
-package com.example.joogouveia.joaogouveia89.api.model;
+package io.github.joaogouveia89.api.model;
 
 /**
  * Created by João Gouveia on 20/10/2017.

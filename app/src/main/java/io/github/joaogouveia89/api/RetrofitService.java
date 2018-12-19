@@ -1,15 +1,19 @@
-package com.example.joogouveia.joaogouveia89.api;
+package io.github.joaogouveia89.api;
 
-import com.example.joogouveia.joaogouveia89.api.model.Temperature;
 
 import java.util.List;
 
+import io.github.joaogouveia89.api.model.Temperature;
+import io.github.joaogouveia89.app.Constants;
+import io.reactivex.Observable;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Url;
 
 /**
@@ -17,20 +21,18 @@ import retrofit2.http.Url;
  */
 
 public interface RetrofitService {
-    @Headers("X-Mashape-Key: AuuyclCPjcmshv2iOPq190OpzLrMp1FJWwejsnJrdfwOUr4h44")
-    @FormUrlEncoded
-    @POST("temperatures")
-    Call<Temperature> sendTemperature(@Field("temperature") String temperature,
-                                       @Field("date") String date,
-                                       @Field("hour") String hour,
-                                       @Field("token") String token);
 
-    @GET
-    Call<List<Temperature>> getLastTemperature(@Url String url);
+    @POST(Constants.Service.POST_TEMPERATURE)
+    Observable<Temperature> sendTemperature(@Body Temperature temperature);
 
-    @GET
-    Call<List<Temperature>> getTemperatures(@Url String url);
+    @GET(Constants.Service.GET_LAST_TEMPERATURE)
+    Observable<Temperature> getLastTemperature();
 
-    @GET
-    Call<List<Temperature>> getMonthTemperatures(@Url String url);
+    @GET(Constants.Service.GET_TEMPERATURE_LIST)
+    Observable<List<Temperature>> getTemperatures();
+
+    @GET(Constants.Service.GET_MONTH_TEMPERATURES)
+    Observable<List<Temperature>> getMonthTemperatures(
+            @Path("month") int month,
+            @Path("year") int year);
 }

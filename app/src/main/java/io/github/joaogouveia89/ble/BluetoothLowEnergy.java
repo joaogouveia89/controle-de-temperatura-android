@@ -1,4 +1,4 @@
-package com.example.joogouveia.joaogouveia89.ble;
+package io.github.joaogouveia89.ble;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
