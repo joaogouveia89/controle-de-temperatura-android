@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.joogouveia.controletemperatura.SumTransition">
+    tools:context="com.example.joogouveia.joaogouveia89.SumTransition">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

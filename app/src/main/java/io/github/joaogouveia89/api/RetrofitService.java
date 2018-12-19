@@ -1,6 +1,6 @@
-package com.example.joogouveia.controletemperatura.api;
+package com.example.joogouveia.joaogouveia89.api;
 
-import com.example.joogouveia.controletemperatura.api.model.Temperature;
+import com.example.joogouveia.joaogouveia89.api.model.Temperature;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.Query;
 import retrofit2.http.Url;
 
 /**

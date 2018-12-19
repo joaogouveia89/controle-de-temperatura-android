@@ -1,4 +1,4 @@
-package com.example.joogouveia.controletemperatura.api;
+package com.example.joogouveia.joaogouveia89.api;
 
 import com.google.gson.Gson;
 
