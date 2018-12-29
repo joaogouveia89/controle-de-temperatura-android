@@ -24,7 +24,6 @@ public class HomeActivity extends BaseActivityViewModel<ActivityHomeBinding, Hom
     }
 
     private void init() {
-        showDialogProgress();
         mViewModel.init();
     }
 }

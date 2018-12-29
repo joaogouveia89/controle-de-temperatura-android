@@ -1,9 +1,12 @@
 package io.github.joaogouveia89.api.model;
 
+import org.parceler.Parcel;
+
 /**
  * Created by João Gouveia on 20/10/2017.
  */
 
+@Parcel
 public class Temperature {
     private String temperature;
     private String date;

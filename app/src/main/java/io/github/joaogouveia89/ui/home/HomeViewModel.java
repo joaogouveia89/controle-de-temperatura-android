@@ -3,10 +3,12 @@ package io.github.joaogouveia89.ui.home;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.util.Log;
+import android.view.View;
 
 import io.github.joaogouveia89.api.RetrofitBase;
 import io.github.joaogouveia89.interfaces.CallbackBasicViewModel;
 import io.github.joaogouveia89.ui.base.BaseViewModel;
+import io.github.joaogouveia89.ui.temperatureList.TemperatureListDialog;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -40,6 +42,11 @@ public class HomeViewModel extends BaseViewModel {
                     lastTemperatureTimestamp.set(response.getDate() +  " " + response.getHour());
                 },this::handleError);
         compositeDisposable.add(disposable);
+    }
+
+    public void openTemperaturesListDialog(View view){
+        TemperatureListDialog dialog = TemperatureListDialog.newInstance();
+        showDialogFragment(dialog);
     }
 
     private void handleError(Throwable t){

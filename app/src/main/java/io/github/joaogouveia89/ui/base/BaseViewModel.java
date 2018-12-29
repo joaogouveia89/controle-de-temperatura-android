@@ -1,5 +1,7 @@
 package io.github.joaogouveia89.ui.base;
 
+import android.support.v4.app.DialogFragment;
+
 import io.github.joaogouveia89.interfaces.CallbackBasicViewModel;
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -14,16 +16,11 @@ public class BaseViewModel implements ViewModel {
         this.compositeDisposable = compositeDisposable;
     }
 
-    protected void showProgress() {
-        if (callback != null) callback.showDialogProgress();
-    }
-
-    protected void hideProgress() {
-        if (callback != null) callback.hideDialogProgress();
+    protected void showDialogFragment(DialogFragment dialogFragment) {
+        dialogFragment.show(callback.getDialogFragmentManager(), "dialog");
     }
 
     protected void showError(Throwable t) {
-        hideProgress();
         if (callback != null) callback.showError(t);
     }
 

@@ -1,49 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_horizontal">
-
-    <TextView
-        android:id="@+id/tv_list_temperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="30dp"
-        tools:layout_editor_absoluteX="146dp"
-        tools:layout_editor_absoluteY="131dp" />
+<layout>
+    
+    <data>
+        <variable
+            name="viewModel"
+            type="io.github.joaogouveia89.ui.temperatureList.TemperatureItemViewModel"/>
+    </data>
 
     <LinearLayout
+        android:orientation="vertical"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="right"
-        android:orientation="horizontal">
+        android:padding="10dp"
+        android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/tv_list_date"
+            android:id="@+id/tv_list_temperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
-            android:paddingRight="20dp"
-            tools:layout_editor_absoluteX="146dp"
-            tools:layout_editor_absoluteY="213dp" />
+            android:text="@{viewModel.temperature}"
+            android:textSize="30sp" />
 
-        <TextView
-            android:id="@+id/tv_list_hour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:paddingRight="20dp"
-            tools:layout_editor_absoluteX="191dp"
-            tools:layout_editor_absoluteY="299dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="end"
+            android:paddingEnd="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_list_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingEnd="10dp"
+                android:text="@{viewModel.date}" />
+
+            <TextView
+                android:id="@+id/tv_list_hour"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{viewModel.hour}" />
+        </LinearLayout>
+
+        <View
+            android:layout_marginTop="20dp"
+            android:background="@color/separate_list_line"
+            android:layout_width="match_parent"
+            android:layout_height="0.8dp"/>
     </LinearLayout>
-    
-    <View
-        android:layout_marginTop="20dp"
-        android:background="@color/separate_list_line"
-        android:layout_width="match_parent"
-        android:layout_height="0.8dp"/>
-</LinearLayout>
+</layout>
