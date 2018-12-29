@@ -18,7 +18,7 @@ public class HomeActivity extends BaseActivityViewModel<ActivityHomeBinding, Hom
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_home);
-        mViewModel = new HomeViewModel(this);
+        mViewModel = new HomeViewModel(this, compositeDisposable);
         mBinding.setViewModel(mViewModel);
         init();
     }
